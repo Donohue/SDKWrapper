@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)initWithSDK:(Class)sdk;
 
 - (void)initialize:(void(^)(void))initialize;
+- (void)delayedInitialize:(void(^)(void))initialize;
+- (void)safeSDKCall:(void(^)(void))call;
 - (BOOL)sdkCrashes;
 
 @end

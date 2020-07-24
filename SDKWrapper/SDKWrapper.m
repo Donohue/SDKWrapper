@@ -11,6 +11,7 @@
 
 @property (nonatomic, strong) Class sdk;
 @property (nonatomic) BOOL initialized;
+@property (nonatomic, copy) void(^delayedInitializer)(void);
 
 @end
 
@@ -23,6 +24,12 @@
         self.initialized = NO;
     }
     return self;
+}
+
+- (void)delayedInitialize:(void(^)(void))initialize {
+    if (!self.initialized) {
+        self.delayedInitializer = initialize;
+    }
 }
 
 - (void)initialize:(void(^)(void))initialize {
@@ -40,6 +47,11 @@
 
 - (void)safeSDKCall:(void(^)(void))call {
     if (self.initialized) {
+        call();
+    }
+    else if (self.delayedInitializer) {
+        [self initialize:self.delayedInitializer];
+        self.delayedInitializer = nil;
         call();
     }
 }
