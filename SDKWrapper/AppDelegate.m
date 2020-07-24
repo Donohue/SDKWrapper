@@ -6,6 +6,10 @@
 //
 
 #import "AppDelegate.h"
+#import "SDKWrapper.h"
+#import "FBSDKWrapper.h"
+
+@import FBSDKCoreKit;
 
 @interface AppDelegate ()
 
@@ -15,7 +19,16 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    BOOL crashOnInit = ![[FBSDKWrapper sharedInstance] sdkCrashes];
+    NSLog(@"Initializing");
+    [[FBSDKWrapper sharedInstance] initialize:^{
+        [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+        if (crashOnInit) {
+            NSLog(@"Crashing");
+            @throw NSInternalInconsistencyException;
+        }
+    }];
+    NSLog(@"Completed");
     return YES;
 }
 
